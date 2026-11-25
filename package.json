@@ -11,7 +11,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "ci": "npm run lint && npm test && npm run build"
+    "ci": "npm run lint && npm test && npm run build",
+    "risk": "node scripts/risk-check.js"
   },
   "engines": {
     "node": ">=20.19"

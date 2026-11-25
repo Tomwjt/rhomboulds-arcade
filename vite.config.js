@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import { buildHealthPayload } from './src/health.js';
 
@@ -45,6 +46,15 @@ function healthPlugin() {
 
 export default defineConfig({
   plugins: [healthPlugin()],
+  build: {
+    // One HTML entry per page. Add new games here.
+    rolldownOptions: {
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        'tic-tac-toe': fileURLToPath(new URL('./games/tic-tac-toe/index.html', import.meta.url)),
+      },
+    },
+  },
   test: {
     include: ['tests/**/*.test.js'],
   },

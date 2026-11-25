@@ -6,6 +6,8 @@
   --ok: #1f9d55;
   --error: #d64545;
   --pending: #b0b0b0;
+  --accent-x: #2b6cb0;
+  --accent-o: #c05621;
   color-scheme: light dark;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.5;
@@ -17,6 +19,8 @@
     --fg: #ececec;
     --muted: #9a9a9a;
     --border: #2c2c2c;
+    --accent-x: #63b3ed;
+    --accent-o: #f6ad55;
   }
 }
 
@@ -48,8 +52,7 @@ main {
   margin: 0;
 }
 
-.tagline,
-.placeholder {
+.tagline {
   color: var(--muted);
 }
 
@@ -61,11 +64,52 @@ main {
   padding: 1.5rem 0;
 }
 
-.placeholder {
-  padding: 1.5rem;
-  border: 1px dashed var(--border);
+.breadcrumb {
+  margin: 0 0 0.5rem;
+  font-size: 0.875rem;
+}
+
+.breadcrumb a {
+  color: var(--muted);
+}
+
+.game-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 1rem;
+}
+
+.game-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  height: 100%;
+  padding: 1rem;
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
-  text-align: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.game-card:hover,
+.game-card:focus-visible {
+  border-color: var(--muted);
+}
+
+.game-card-title {
+  font-weight: 600;
+}
+
+.game-card-desc {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.game {
+  padding: 1.5rem 0;
 }
 
 .site-footer {
