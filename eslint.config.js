@@ -10,8 +10,8 @@ export default [
     languageOptions: { globals: globals.browser },
   },
   {
-    // Build config and tests run in Node.
-    files: ['*.config.js', 'tests/**/*.js'],
+    // Build config, scripts and tests run in Node.
+    files: ['*.config.js', 'scripts/**/*.js', 'tests/**/*.js'],
     languageOptions: { globals: globals.node },
   },
 ];
