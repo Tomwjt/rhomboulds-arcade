@@ -1,0 +1,104 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --muted: #666666;
+  --border: #e2e2e2;
+  --ok: #1f9d55;
+  --error: #d64545;
+  --pending: #b0b0b0;
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --fg: #ececec;
+    --muted: #9a9a9a;
+    --border: #2c2c2c;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 48rem;
+  min-height: 100vh;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+main {
+  flex: 1;
+}
+
+.site-header {
+  padding: 2rem 0 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header h1 {
+  margin: 0;
+}
+
+.tagline,
+.placeholder {
+  color: var(--muted);
+}
+
+.tagline {
+  margin: 0.25rem 0 0;
+}
+
+.games {
+  padding: 1.5rem 0;
+}
+
+.placeholder {
+  padding: 1.5rem;
+  border: 1px dashed var(--border);
+  border-radius: 0.5rem;
+  text-align: center;
+}
+
+.site-footer {
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.status a {
+  color: inherit;
+  margin-left: auto;
+}
+
+.status-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--pending);
+}
+
+[data-state='ok'] .status-dot {
+  background: var(--ok);
+}
+
+[data-state='error'] .status-dot {
+  background: var(--error);
+}

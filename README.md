@@ -1,0 +1,95 @@
+# Rhomboulds Arcade
+
+An online games portal. For now it's just a landing page: a header, an empty "Games" section, and a status indicator that shows whether the build is healthy.
+
+Built with [Vite](https://vite.dev) (dev server and bundler) and [Vitest](https://vitest.dev) (tests). Plain HTML, CSS and JavaScript, with no framework.
+
+## Requirements
+
+- Node.js 20.19 or newer. CI uses the version in `.nvmrc` (24), so `nvm use` matches it.
+- npm
+
+## Getting started
+
+```sh
+npm install
+npm run dev
+```
+
+Open http://localhost:5173. The footer shows a status dot:
+
+- **green**: `/health.json` responded with `"status": "ok"` (shows version, mode and build time)
+- **red**: the health check failed (shows the reason)
+- **grey**: still checking
+
+## Scripts
+
+| Command              | What it does                                         |
+| -------------------- | ---------------------------------------------------- |
+| `npm run dev`        | Start the dev server with hot reload                 |
+| `npm run lint`       | Lint all JavaScript with ESLint                      |
+| `npm test`           | Run the test suite once                              |
+| `npm run test:watch` | Run tests in watch mode                              |
+| `npm run build`      | Build a production bundle into `dist/`               |
+| `npm run preview`    | Serve the built `dist/` locally (http://localhost:4173) |
+| `npm run ci`         | Lint, test and build: the same checks CI runs        |
+
+## Health check
+
+Every build writes `dist/health.json`:
+
+```json
+{
+  "status": "ok",
+  "name": "rhomboulds-arcade",
+  "version": "0.1.0",
+  "mode": "production",
+  "builtAt": "2026-11-25T21:20:55.881Z"
+}
+```
+
+Use it to confirm a build or deploy went out:
+
+```sh
+npm run build && npm run preview
+curl http://localhost:4173/health
+```
+
+- In `dev` and `preview`, the payload is served at both `/health` and `/health.json`.
+- In a static deployment, only `/health.json` exists, because it's a plain file in `dist/`. Point uptime checks there.
+- `version` comes from `package.json`. `builtAt` is the build time (in dev, the time the server started).
+
+The payload comes from a small Vite plugin in `vite.config.js`.
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every pull request and on every push to `main`. It has one job, **Lint, test & build**, which:
+
+1. installs exact dependencies from `package-lock.json` with `npm ci`, using a cached npm store
+2. runs `npm run lint`, `npm test` and `npm run build`
+3. checks that `dist/health.json` reports `"status": "ok"` in production mode
+
+To reproduce it locally, run `npm ci && npm run ci`.
+
+Runs are deterministic: Node comes from `.nvmrc`, dependencies from the lockfile, the runner image is pinned (`ubuntu-24.04`), and actions are pinned to commit SHAs. A newer push to the same branch cancels the run already in progress.
+
+**Blocking merges:** the workflow reports a status, but GitHub only blocks a merge when branch protection requires it. Go to *Settings → Branches* (or *Rules → Rulesets*), add a rule for `main`, and require the **Lint, test & build** status check to pass.
+
+## Project layout
+
+```
+index.html          Landing page markup
+src/main.js         Entry point; wires up the status indicator
+src/status.js       Fetches and describes the health check
+src/health.js       Builds the health payload (used by the Vite plugin)
+src/style.css       Styles (light and dark)
+tests/              Vitest unit tests
+vite.config.js      Vite config and the health plugin
+eslint.config.js    ESLint config
+.nvmrc              Node version used by CI
+.github/workflows/  CI workflow
+```
+
+## Deploying
+
+`npm run build` produces a fully static site in `dist/`. Any static host works (GitHub Pages, Netlify, Cloudflare Pages, S3, and so on). If you deploy under a sub-path, set `base` in `vite.config.js`. The status indicator already respects it.
