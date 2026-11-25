@@ -1,6 +1,6 @@
 # Rhomboulds Arcade
 
-An online games portal. For now it's just a landing page: a header, an empty "Games" section, and a status indicator that shows whether the build is healthy.
+An online games portal. It has a games hub and one game so far, **Tic-Tac-Toe** (two players, one screen). The hub's footer shows whether the build is healthy.
 
 Built with [Vite](https://vite.dev) (dev server and bundler) and [Vitest](https://vitest.dev) (tests). Plain HTML, CSS and JavaScript, with no framework.
 
@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173. The footer shows a status dot:
+Open http://localhost:5173 for the hub, or go straight to http://localhost:5173/games/tic-tac-toe/. The hub's footer shows a status dot:
 
 - **green**: `/health.json` responded with `"status": "ok"` (shows version, mode and build time)
 - **red**: the health check failed (shows the reason)
@@ -94,7 +94,9 @@ Findings appear as warning annotations and in the job summary. The check is **ad
 ## Project layout
 
 ```
-index.html          Landing page markup
+index.html          Games hub (landing page)
+games/<slug>/       One HTML page per game (e.g. games/tic-tac-toe/)
+src/games/<slug>/   Game code: logic.js (pure rules), main.js (UI), style.css
 src/main.js         Entry point; wires up the status indicator
 src/status.js       Fetches and describes the health check
 src/health.js       Builds the health payload (used by the Vite plugin)
@@ -107,6 +109,10 @@ eslint.config.js    ESLint config
 .github/workflows/  CI and PR review workflows
 CLAUDE.md           Architecture, conventions and rules for contributors
 ```
+
+## Adding a game
+
+See "Games" in `CLAUDE.md`. In short: add the page and code under `games/<slug>/` and `src/games/<slug>/`, register the page in `vite.config.js` (`build.rolldownOptions.input`), link it from the hub, and add tests for its logic.
 
 ## Deploying
 

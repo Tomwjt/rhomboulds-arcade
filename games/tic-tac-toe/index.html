@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Play Tic-Tac-Toe at Rhomboulds Arcade." />
+    <title>Tic-Tac-Toe · Rhomboulds Arcade</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <p class="breadcrumb"><a href="../../">← Rhomboulds Arcade</a></p>
+      <h1>Tic-Tac-Toe</h1>
+      <p class="tagline">Two players, one screen. Get three in a row to win.</p>
+    </header>
+
+    <main class="game">
+      <p class="game-status" data-game-status role="status" aria-live="polite">X to play</p>
+      <div class="board" data-board role="group" aria-label="Tic-Tac-Toe board"></div>
+      <button type="button" class="restart" data-restart>Restart</button>
+    </main>
+
+    <script type="module" src="/src/games/tic-tac-toe/main.js"></script>
+  </body>
+</html>

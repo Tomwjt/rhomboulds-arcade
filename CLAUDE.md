@@ -4,22 +4,40 @@ Guidance for Claude (and anyone else) working in this repo. `README.md` covers h
 
 ## What this is
 
-Rhomboulds Arcade is an online games portal at a very early stage. Right now it is a single static landing page: a header, an empty "Games" placeholder, and a footer status indicator backed by `/health.json`. **There are no games yet. Don't add any unless the task asks for one.**
+Rhomboulds Arcade is an online games portal at an early stage. It's a static site with a landing page (the games hub, with a footer status indicator backed by `/health.json`) and one game, **Tic-Tac-Toe**. Don't add games unless the task asks for one.
 
 ## Architecture
 
-- **Static site, no framework.** Plain HTML, CSS and ES modules. Vite runs the dev server and builds into `dist/`. There is no backend.
-- `index.html`: the only page. Markup lives here, not in JS.
+- **Static multi-page site, no framework.** Plain HTML, CSS and ES modules. Vite runs the dev server and builds into `dist/`. There is no backend.
+- `index.html`: the games hub. Markup lives in HTML, not JS. Each game is a card in the `.game-list`.
 - `src/main.js`: the entry point. It only wires the DOM to logic in other modules.
 - `src/status.js`: fetches and describes the health check. Logic is kept out of the DOM so it can be tested.
 - `src/health.js`: builds the health payload. It's pure, so the Vite plugin and the tests can both import it.
-- `src/style.css`: all styles. Colours are CSS variables on `:root`, with dark-mode overrides.
-- `vite.config.js`: Vite config, plus the `arcade-health` plugin. The plugin serves `/health` and `/health.json` in dev and preview, and writes `dist/health.json` at build time.
+- `src/style.css`: shared styles for every page. Colours are CSS variables on `:root`, with dark-mode overrides.
+- `games/<slug>/` and `src/games/<slug>/`: one page plus its code per game (see [Games](#games)).
+- `vite.config.js`: Vite config. Registers each HTML page as a build input and contains the `arcade-health` plugin. The plugin serves `/health` and `/health.json` in dev and preview, and writes `dist/health.json` at build time.
 - `scripts/`: Node-only repo tooling. Currently the PR risk checker: `risk-rules.js` (pure logic) and `risk-check.js` (the command-line wrapper).
-- `tests/`: Vitest unit tests, named `<module>.test.js`.
+- `tests/`: Vitest unit tests, named `<module>.test.js` or `<game-slug>.test.js`.
 - `.github/workflows/`:
   - `ci.yml` runs lint, test, build and a health-check verification on PRs and pushes to `main`. This is the merge gate.
   - `pr-review.yml` runs the risk checker on PRs. It's advisory and never fails.
+
+### Games
+
+Each game is its own page and has three parts:
+
+- `games/<slug>/index.html`: the page, at `/games/<slug>/`. It links back to the hub with the relative link `../../`.
+- `src/games/<slug>/logic.js`: **pure, immutable game rules** with no DOM. This is where all the testable logic lives.
+- `src/games/<slug>/main.js` (+ `style.css`): a thin UI layer that renders state and turns clicks into logic calls.
+
+To add a game:
+
+1. Create those files.
+2. Add the page to `build.rolldownOptions.input` in `vite.config.js`. Without this, the page is missing from `dist/` even though it works in dev.
+3. Add a card to the hub in `index.html` with a **relative** link (`games/<slug>/`) so sub-path deploys keep working.
+4. Add `tests/<slug>.test.js`.
+
+Tic-Tac-Toe (`tic-tac-toe`) is the reference example.
 
 ### The health contract
 
@@ -37,7 +55,7 @@ Rhomboulds Arcade is an online games portal at a very early stage. Right now it 
 
 ## Testing expectations
 
-- `npm test` must pass. New or changed logic in `src/` or `scripts/` gets unit tests in `tests/`.
+- `npm test` must pass. New or changed logic in `src/` or `scripts/` gets unit tests in `tests/`. For games, test `logic.js` thoroughly (legal and illegal moves, every win condition, end states). The DOM layer stays thin enough not to need unit tests.
 - Test behaviour through public exports, not internals. Cover the failure paths too (look at how `status.test.js` handles HTTP errors, bad payloads and thrown errors).
 - No `.only` or `.skip` in committed tests. Don't delete or weaken a test to make it pass. Fix the code, or explain in the PR why the expected behaviour changed.
 - Tests must be deterministic: no real network, no dependence on the current time (inject dates, as `buildHealthPayload` does), no reliance on test order.
